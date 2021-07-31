@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <!-- Navigation, just for looks -->
     <v-navigation-drawer
       app
       class="pt-4"
@@ -37,6 +38,7 @@
               <!-- Container for accordians -->
               <v-container>
                 <v-expansion-panels>
+                  <!-- Benchmark accordian -->
                   <v-expansion-panel class="mb-5 p-3">
                     <v-expansion-panel-header>
                       <v-checkbox label="Benchmark"></v-checkbox>
@@ -44,6 +46,7 @@
                     <v-expansion-panel-content>Fusce et placerat augue, tristique sagittis metus. In auctor metus in elit lobortis, vulputate ullamcorper quam lobortis. Aliquam malesuada, urna fermentum rutrum feugiat, neque est blandit urna, fringilla elementum erat libero et velit. Nam sagittis sollicitudin pulvinar.</v-expansion-panel-content>
                   </v-expansion-panel>
 
+                  <!-- Accelerate panel, default selected to match figma spec -->
                   <v-expansion-panel class="m-5 p-3"> 
                     <v-expansion-panel-header>
                       <v-checkbox 
@@ -56,6 +59,7 @@
                 </v-expansion-panels>
               </v-container>
 
+              <!-- new smaller card for the description of the table and the add button -->
               <v-card 
                 tile
                 elevation="0"
@@ -65,6 +69,8 @@
                     <v-card-subtitle>Hardware targets</v-card-subtitle>
                   </v-col>
                   <v-col md="2">
+                    <!-- Add button adds elements to target array, used
+                         to add rows to table and total runs card -->
                     <v-btn 
                       color="blue white--text"
                       @click="addTarget"  
@@ -76,6 +82,8 @@
               <!-- Table for options -->
               <v-simple-table>
                 <template v-slot:default>
+                  <!-- Header row, includes an empty spot so the 
+                       x button lines up more nicely -->
                   <thead>
                     <tr>
                       <th class="text-left blue--text">
@@ -93,12 +101,16 @@
                       <th></th>
                     </tr>
                   </thead>
+
+                  <!-- Table body -->
                   <tbody>
+                    <!-- dynamically creates rows -->
                     <tr
                       v-for="(item, index) in targets"
                       :key="item"
                     >
                       <td>
+                        <!-- Dropdown, contains hardcoded list of providers -->
                         <v-select
                           v-model="targets[index].provider"
                           :items="providers"
@@ -109,6 +121,7 @@
                         ></v-select>
                       </td>
                       <td>
+                        <!-- Dropdown, contains list of instance options based on selected provider -->
                         <v-select
                           v-model="targets[index].instance"
                           :items="hardware.filter(hw => hw.provider === targets[index].provider)"
@@ -118,14 +131,17 @@
                           solo
                         ></v-select>
                       </td>
+                      <!-- cpu/memory specs are updated based on selected instance -->
                       <td>{{ getCPU(targets[index].instance, index) }}</td>
                       <td>{{ getMemory(targets[index].instance, index) }}</td>
                       <td>
+                        <!-- button to remove an item, only shows once selections have been
+                             made in both dropdowns -->
                         <v-btn
-                          v-if="targets[index].instance === ` `"
+                          v-if="targets[index].instance != ``"
                           @click="removeTarget(index)" 
                           icon
-                        >X</v-btn>
+                        >x</v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -139,11 +155,15 @@
             <v-card class="justify-end m-5">
               <v-card-subtitle class="text-right">Total Runs</v-card-subtitle>
               <v-card-text class="text-right text-h5 green--text">{{targets.length}}</v-card-text>
+              
+              <!-- Dynamically adds rows for run details, in the same
+                   order they are displayed in the table -->
               <v-row
                 v-for="item in targets"
                 :key="item.instance"
               >
                 <v-col>
+                  <!-- Card displays instance and cpu details -->
                   <v-card elevation="0">
                     <v-card-title class="text-subtitle-1 font-weight-bold">{{item.instance}}</v-card-title>
                     <v-card-subtitle>{{item.cpu}} cores</v-card-subtitle>
@@ -151,6 +171,9 @@
                 </v-col>
                 <v-col md="4"><v-card-text class="text-right text-h6 green--text">1</v-card-text></v-col>
               </v-row>
+
+              <!-- Octomize button is disabled when there are no hardware
+                   targets specified, but is otherwise just for show -->
               <v-card-actions>
                 <v-btn 
                   block
@@ -168,35 +191,50 @@
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld';
 
 export default {
   name: 'App',
 
-  components: {
-    //HelloWorld,
-  },
-
   data: () => ({
+        //API response
         hardware:[],
+        //hardcoded array of provider objects for dropdown
         providers: [{value:"AWS", name:"Amazon Web Services"}, {value:"GCP", name:"Google Cloud"}, {value:"Azure", name:"Azure"}],
+        //array of hardware targets defined by the user
         targets: [],
   }),
   
   methods: {
+    /*
+      Method: getData
+       -Gets data from netheria API, will catch and log errors
+    */
     async getData() {
       try {
         // Get data
         const response = await fetch("http://netheria.takehome.octoml.ai/hardware").then(response => response.json());
         this.hardware = response;
-        console.log(response);
+        //console.log(response);
       } catch (error) {
         console.log(error);
       }
     },
+    /*
+      Method: addTarget
+       -Adds an empty object to the target array
+     */
     addTarget() {
       this.targets.push({"provider": "", "instance": "","cpu": 0,"memory": 0})
     },
+    /*
+      Method: getCPU
+       -Gets the value of the cpu element of the specified instance, and both returns it
+        and uses it to update the cpu element at target[index]
+      Parameters:
+       -selectedInstance: the value of the instance property selected by the user
+       -index: the index of the object in the target array to be modified
+      
+    */
     getCPU(selectedInstance, index) {
       const filtered = this.hardware.filter(hw => hw.instance === selectedInstance);
       if (filtered.length > 0){
@@ -206,7 +244,16 @@ export default {
       else
         return 0;
     },
-    getMemory(selectedInstance,index) {
+    /*
+      Method: getMemory
+       -Gets the value of the memory element of the specified instance, and both returns it
+        and uses it to update the cpu element at target[index]
+      Parameters:
+       -selectedInstance: the value of the instance property selected by the user
+       -index: the index of the object in the target array to be modified
+      
+    */
+    getMemory(selectedInstance, index) {
       const filtered = this.hardware.filter(hw => hw.instance === selectedInstance);
       if (filtered.length > 0){
         this.targets[index].memory = filtered[0].memory;
@@ -215,6 +262,12 @@ export default {
       else
         return 0;
     },
+    /*
+      Method: removeTarget
+       -removes an object from target[index]
+      Parameters:
+       -index: index of item to be removed
+     */
     removeTarget(index) {
       this.targets.splice(index,1);
       this.selectedProvider.splice(index,1);
@@ -230,9 +283,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.background {
-  background-color: gray;
-}
-</style>
