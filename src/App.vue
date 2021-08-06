@@ -26,59 +26,72 @@
         <v-row>
           <v-col
             cols="12"
-            sm="6"
             md="9"
           >
             <v-card 
             elevation="5"
             class="pa-5"
             >
-              <v-card-title>Octomize</v-card-title>
+              <v-card-title class="text-h4">Octomize</v-card-title>
               
               <!-- Container for accordians -->
-              <v-container>
-                <v-expansion-panels>
-                  <!-- Benchmark accordian -->
-                  <v-expansion-panel class="mb-5 p-3">
-                    <v-expansion-panel-header>
-                      <v-checkbox label="Benchmark"></v-checkbox>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>Fusce et placerat augue, tristique sagittis metus. In auctor metus in elit lobortis, vulputate ullamcorper quam lobortis. Aliquam malesuada, urna fermentum rutrum feugiat, neque est blandit urna, fringilla elementum erat libero et velit. Nam sagittis sollicitudin pulvinar.</v-expansion-panel-content>
-                  </v-expansion-panel>
+              <v-row>
+                <v-col>
+                  <v-expansion-panels 
+                    class="d-flex align-center"
+                  >
+                    <!-- Benchmark accordian -->
+                    <v-expansion-panel 
+                      class="mb-5 p-3 rounded-lg"
+                      elevation="0"
+                    >
+                      <v-expansion-panel-header>
+                        <v-checkbox label="Benchmark"></v-checkbox>
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>Fusce et placerat augue, tristique sagittis metus. In auctor metus in elit lobortis, vulputate ullamcorper quam lobortis. Aliquam malesuada, urna fermentum rutrum feugiat, neque est blandit urna, fringilla elementum erat libero et velit. Nam sagittis sollicitudin pulvinar.</v-expansion-panel-content>
+                    </v-expansion-panel>
 
-                  <!-- Accelerate panel, default selected to match figma spec -->
-                  <v-expansion-panel class="m-5 p-3"> 
-                    <v-expansion-panel-header>
-                      <v-checkbox 
-                        input-value="true"
-                        value
-                        label="Accelerate"></v-checkbox>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vestibulum justo in risus vehicula posuere. Proin id laoreet lacus, at tempus leo. Pellentesque suscipit rutrum purus ut suscipit. </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-              </v-container>
-
+                    <!-- Accelerate panel, default selected to match figma spec -->
+                    <v-expansion-panel 
+                      class="m-5 p-3 rounded-lg"
+                      elevation="0"
+                    > 
+                      <v-expansion-panel-header>
+                        <v-checkbox 
+                          input-value="true"
+                          value
+                          label="Accelerate"></v-checkbox>
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vestibulum justo in risus vehicula posuere. Proin id laoreet lacus, at tempus leo. Pellentesque suscipit rutrum purus ut suscipit. </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                </v-col>
+              </v-row>
+              <v-row class="mb-12"></v-row>
               <!-- new smaller card for the description of the table and the add button -->
-              <v-card 
-                tile
-                elevation="0"
-              >
-                <v-row>
-                  <v-col>
-                    <v-card-subtitle>Hardware targets</v-card-subtitle>
-                  </v-col>
-                  <v-col md="2">
-                    <!-- Add button adds elements to target array, used
-                         to add rows to table and total runs card -->
-                    <v-btn 
-                      color="blue white--text"
-                      @click="addTarget"  
-                    >Add</v-btn>
-                  </v-col>
-                </v-row>
-              </v-card>
-
+              <v-row>
+                <v-col>
+                  <v-card 
+                    tile
+                    elevation="0"
+                  >
+                    <v-row>
+                      <v-col col="10" md="10">
+                        <v-card-subtitle>Hardware targets</v-card-subtitle>
+                      </v-col>
+                      <v-col class="d-flex justify-end"  >
+                        <!-- Add button adds elements to target array, used
+                            to add rows to table and total runs card -->
+                        <v-btn 
+                          color="blue white--text"
+                          @click="addTarget"
+                          elevation="0"
+                        >Add</v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-card>
+                </v-col>
+              </v-row>
               <!-- Table for options -->
               <v-simple-table>
                 <template v-slot:default>
@@ -86,19 +99,31 @@
                        x button lines up more nicely -->
                   <thead>
                     <tr>
-                      <th class="text-left blue--text">
+                      <th 
+                        class="text-left blue--text" 
+                        width="30%"
+                      >
                         Provider
                       </th>
-                      <th class="text-left">
+                      <th 
+                        class="text-left"
+                        width="30%"
+                      >
                         Instance
                       </th>
-                      <th class="text-left">
+                      <th 
+                        class="text-left"
+                        width="10%"
+                      >
                         VCPU
                       </th>
-                      <th class="text-left">
+                      <th 
+                        class="text-left"
+                        width="15%"
+                      >
                         Memory (GIB)
                       </th>
-                      <th></th>
+                      <th width="5%"></th>
                     </tr>
                   </thead>
 
@@ -109,7 +134,7 @@
                       v-for="(item, index) in targets"
                       :key="item"
                     >
-                      <td>
+                      <td >
                         <!-- Dropdown, contains hardcoded list of providers -->
                         <v-select
                           v-model="targets[index].provider"
@@ -118,6 +143,7 @@
                           item-value="value"
                           label="Select Provider"
                           solo
+                          class="mt-5"
                         ></v-select>
                       </td>
                       <td>
@@ -125,23 +151,28 @@
                         <v-select
                           v-model="targets[index].instance"
                           :items="hardware.filter(hw => hw.provider === targets[index].provider)"
+                          :disabled="targets[index].provider === ''"
                           item-text="instance"
                           item-value="instance"
-                          label="Select Provider"
+                          label="Select Instance"
                           solo
+                          class="mt-5"
                         ></v-select>
                       </td>
                       <!-- cpu/memory specs are updated based on selected instance -->
-                      <td>{{ getCPU(targets[index].instance, index) }}</td>
-                      <td>{{ getMemory(targets[index].instance, index) }}</td>
-                      <td>
+                      <td :class="targets[index].instance === '' ? 'disabled-text' : ''">
+                        {{ getCPU(targets[index].instance, index) }}
+                      </td>
+                      <td :class="targets[index].instance === '' ? 'disabled-text' : ''">
+                        {{ getMemory(targets[index].instance, index) }}</td>
+                      <td class="ps-0 pe-0">
                         <!-- button to remove an item, only shows once selections have been
                              made in both dropdowns -->
                         <v-btn
                           v-if="targets[index].instance != ``"
                           @click="removeTarget(index)" 
                           icon
-                        >x</v-btn>
+                        ><v-icon>mdi-close</v-icon></v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -154,22 +185,29 @@
             <!-- Container for run outputs -->
             <v-card class="justify-end m-5">
               <v-card-subtitle class="text-right">Total Runs</v-card-subtitle>
-              <v-card-text class="text-right text-h5 green--text">{{targets.length}}</v-card-text>
+              <v-card-text 
+                class="text-right text-h4 green--text"
+              >{{runs ? targets.length : 0}}</v-card-text>
               
               <!-- Dynamically adds rows for run details, in the same
                    order they are displayed in the table -->
               <v-row
                 v-for="item in targets"
                 :key="item.instance"
-              >
-                <v-col>
+              > 
+                <v-col v-if="item.instance === ''"></v-col>
+                <v-col v-if="item.instance !== ''">
                   <!-- Card displays instance and cpu details -->
                   <v-card elevation="0">
                     <v-card-title class="text-subtitle-1 font-weight-bold">{{item.instance}}</v-card-title>
                     <v-card-subtitle>{{item.cpu}} cores</v-card-subtitle>
                   </v-card>
                 </v-col>
-                <v-col md="4"><v-card-text class="text-right text-h6 green--text">1</v-card-text></v-col>
+                <v-col 
+                  md="4"
+                  v-if="item.instance !== ''">
+                  <v-card-text class="text-right text-h6 green--text">1</v-card-text>
+                </v-col>
               </v-row>
 
               <!-- Octomize button is disabled when there are no hardware
@@ -177,7 +215,7 @@
               <v-card-actions>
                 <v-btn 
                   block
-                  :disabled="targets.length === 0"
+                  :disabled="!runs"
                   color="blue white--text"
                 >Octomize</v-btn>
               </v-card-actions>
@@ -202,6 +240,7 @@ export default {
         providers: [{value:"AWS", name:"Amazon Web Services"}, {value:"GCP", name:"Google Cloud"}, {value:"Azure", name:"Azure"}],
         //array of hardware targets defined by the user
         targets: [],
+        runs: false,
   }),
   
   methods: {
@@ -238,6 +277,7 @@ export default {
     getCPU(selectedInstance, index) {
       const filtered = this.hardware.filter(hw => hw.instance === selectedInstance);
       if (filtered.length > 0){
+        this.runs=true;
         this.targets[index].cpu = filtered[0].cpu;
         return filtered[0].cpu;
       }
@@ -283,3 +323,25 @@ export default {
   }
 };
 </script>
+<style>
+  .v-expansion-panel::before {
+    box-shadow: none !important;
+  }
+  .v-expansion-panel{
+    border: 2px solid rgba(0, 0, 0, 0.20) !important;
+  }
+  .theme--light.v-expansion-panels .v-expansion-panel:not(:first-child)::after {
+    border: none !important;
+  }
+  .disabled-text{
+    color: rgba(0, 0, 0, 0.50);
+  }
+  table {
+  table-layout: fixed;
+  width: 100%;
+  }
+  th,
+  td {
+    overflow: hidden;
+  }
+</style>
